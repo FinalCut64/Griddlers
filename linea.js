@@ -13,6 +13,8 @@ class Linea {
     // this.tamañosb = [];
   }
 
+  //pruebita
+
   completar() {
     let aux = inifintam(this.tipo, this.colrow, 1); //islas negras
     this.inicios = aux.ini;
