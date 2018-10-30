@@ -143,10 +143,6 @@ function datasimple(i, j, k) {
     }
   }
 }
-/*
-function espaciosblancos() {
-}
-*/
 
 //indica si se terminó de resolver la pintura, por lo que no hay nada más que hacer
 function terminamos() {
@@ -204,7 +200,7 @@ function analizalinea(a, colrow) {
 
     //si se llega aca, la linea esta completa
     actualizacolordata(a, colrow, 1);
-    return 1;	//la columna está completada
+    return 1;
   }
 }
 

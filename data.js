@@ -2,11 +2,11 @@
 class Data {
   constructor(escala, i, j, k, value) {
     this.escala = escala; //
-    this.i = i; //
-    this.j = j; //
-    this.k = k; //
-    this.value = value; //
-    this.completado = 0; //para pintar con verde los que ya terminé o
+    this.i = i; //0 = columna, 1 = fila
+    this.j = j; //nro de columna o fila
+    this.k = k; //posicion dentro de data (0 comienza arriba o a la izquierda)
+    this.value = value; //Valor (nro) de la casilla de data
+    this.completado = 0; //Para pintar con verde los que ya terminé o
     //con rojo si hay error (por defecto empieza gris xq no esta completado)
     if (this.i) { //si entra es un dato de las filas (va a la izq de la pintura)
       let diff = data[this.i][this.j].length - this.k;
