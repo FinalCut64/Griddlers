@@ -1,7 +1,7 @@
 // jshint esversion: 6
 class Linea {
   constructor(tipo, colrow, cant) {
-    this.tipo = tipo; //0 = gris, 1 = negra, 2 = blanca
+    this.tipo = tipo; //0 = col, 1 = row
     this.colrow = colrow; //De 0 a cols-1 o rows-1
     this.cant = cant; //cantidad de islas negras
     this.inicios = []; //referidos a islas negras
@@ -32,5 +32,17 @@ class Linea {
         this.mayorindice = i;
       }
     }
+  }
+}
+
+//genera una lista (objeto) con las posiciones de las islas
+//a=0 columnas, a=1 filas
+function listalinea(a, colrow) {
+  if (cantislas(a, colrow, 1) != 0) {
+    linea = new Linea(a, colrow, cantislas(a, colrow, 1)); //tipo, colrow, cant
+    linea.completar(); //completa los elementos q faltan de la linea
+    return linea;
+  }else {
+    return 0;
   }
 }

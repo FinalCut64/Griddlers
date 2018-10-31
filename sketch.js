@@ -71,8 +71,129 @@ function resolver() {
       if (analizalinea(i, j) == 1) {
         llenarblancas(i, j);
       }
+
     }
   }
+}
+
+function keyPressed() {
+  for (let i = 0; i < data.length; i++) {
+    for (let j = 0; j < data[i].length; j++) {
+      let linea = listalinea(i, j);
+      for (let k = 0; k < linea.cant; k++) {
+        let result = isislacompleta(linea, k);
+        delimitaisla(linea, k);
+      }
+      // let dt = datatoarray(data[i][j]);
+      // dt = sortarray(dt);
+      // for (let k = 0; k < linea.cant; k++) {
+      //   if (linea.ordenados[k] == dt[k]) {
+      //   }
+      // }
+    }
+  }
+}
+
+//coloca en blanco las casillas que delimitan una isla completa
+function delimitaisla(linea, indice) {
+  let ini = linea.inicios[indice] - 1; //casilla previa a inicio de isla
+  let fin = linea.fines[indice] + 1; //casilla posterior a fin de isla
+  //primero chequeamos si la isla esta pegada a los bordes
+  if (linea.tipo) { //tipo fila
+    if (ini < 0 && fin >= cols) //se da solo si es una linea llena de casillas negras
+      return; //nada que hacer
+    if (ini < 0) { //isla contra el borde inferior (completa por inicio)
+      pic[fin][linea.colrow].tipo = 2; //pongo en blanco casilla fin
+      return;
+    }
+    if (fin >= cols) { //isla contra el borde superior (completa por fin)
+      pic[ini][linea.colrow].tipo = 2; //pongo en blanco casilla ini
+      return;
+    }
+  }else { //tipo columna
+    if (ini < 0 && fin >= rows) //se da solo si es una linea llena de casillas negras
+      return; //nada que hacer
+    if (ini < 0) { //isla contra el borde inferior (completa por inicio)
+      pic[linea.colrow][fin].tipo = 2; //pongo en blanco casilla fin
+      return;
+    }
+    if (fin >= rows) { //isla contra el borde superior (completa por fin)
+      pic[linea.colrow][ini].tipo = 2; //pongo en blanco casilla ini
+      return;
+    }
+  }
+
+  //aca la isla no está rodeada por ningun borde. Puedo completar sin problemas
+  //tanto la casilla ini como fin
+  if (linea.tipo) {
+    pic[ini][linea.colrow].tipo = 2; //pongo en blanco casilla ini
+    pic[fin][linea.colrow].tipo = 2; //pongo en blanco casilla fin
+  }else {
+    pic[linea.colrow][ini].tipo = 2;
+    pic[linea.colrow][fin].tipo = 2;
+  }
+}
+
+//recibe un objeto linea y la posicion de la isla a considerar
+//devuelve 0 si la isla esta incompleta por ambos extremos, 1 si esta completa
+//2 si esta completa por inicio y 3 si esta completa por fin
+function isislacompleta(linea, indice) {
+  let ini = linea.inicios[indice] - 1; //casilla previa a inicio de isla
+  let fin = linea.fines[indice] + 1; //casilla posterior a fin de isla
+  //primero chequeamos si la isla esta pegada a los bordes
+  if (linea.tipo) { //tipo fila
+    if (ini < 0 && fin >= cols) //se da solo si es una linea llena de casillas negras
+      return 1;
+    if (ini < 0) //isla contra el borde inferior (completa por inicio)
+      return 2;
+    if (fin >= cols) //isla contra el borde superior (completa por fin)
+      return 3;
+  }else { //tipo columna
+    if (ini < 0 && fin >= rows)
+      return 1;
+    if (ini < 0)
+      return 2;
+    if (fin >= rows)
+      return 3;
+  }
+
+  //aca sabemos que la isla no esta pegada a un borde
+  if (linea.tipo) { //tipo fila
+    if (pic[ini][linea.colrow].tipo != 2 && pic[fin][linea.colrow].tipo != 2)
+      return 0;
+    if (pic[ini][linea.colrow].tipo == 2 && pic[fin][linea.colrow].tipo == 2)
+      return 1;
+    if (pic[ini][linea.colrow].tipo == 2 && pic[fin][linea.colrow].tipo != 2)
+      return 2;
+    if (pic[ini][linea.colrow].tipo != 2 && pic[fin][linea.colrow].tipo == 2)
+      return 3;
+  }else { //tipo columna
+    if (pic[linea.colrow][ini].tipo != 2 && pic[linea.colrow][fin].tipo != 2)
+      return 0;
+    if (pic[linea.colrow][ini].tipo == 2 && pic[linea.colrow][fin].tipo == 2)
+      return 1;
+    if (pic[linea.colrow][ini].tipo == 2 && pic[linea.colrow][fin].tipo != 2)
+      return 2;
+    if (pic[linea.colrow][ini].tipo != 2 && pic[linea.colrow][fin].tipo == 2)
+      return 3;
+  }
+}
+
+//convierte el objeto data de una linea en un array
+function datatoarray(dataobj) {
+  let array = [dataobj.length];
+  for (let k = 0; k < dataobj.length; k++) {
+    array[k] = dataobj[k].value;
+  }
+  return array;
+}
+
+//ordena de mayor a menor los elementos de un array
+function sortarray(array) {
+  array.sort(function(a, b) {
+    return b - a; //de mayor a menor
+  });
+  return array;
 }
 
 //llena toda la linea de casillas blancas excepto las que estan pintadas negras
@@ -88,7 +209,6 @@ function llenarblancas(a, colrow) {
         pic[colrow][i].tipo = 2;
     }
   }
-
 }
 
 function datasimple(i, j, k) {
@@ -190,26 +310,22 @@ function analizalinea(a, colrow) {
     }
 
     //ahora se que la cant de islas es correcta, falta ver si el orden está bien
-    let linea = listalinea(a, colrow);
-    for (let i = 0; i < data[a][colrow].length; i++) {
-      if (linea.tamaños[i] != data[a][colrow][i].value) { //si un tamaño de isla no es = que data
-        actualizacolordata(a, colrow, 2); //error
-        return 2;
+    if (pintadas != 0) { //me aseguro q haya al menos una isla pintada, sino ya está
+      let linea = listalinea(a, colrow);
+      for (let i = 0; i < data[a][colrow].length; i++) {
+        if (linea.tamaños[i] != data[a][colrow][i].value) { //si un tamaño de isla no es = que data
+          actualizacolordata(a, colrow, 2); //error
+          return 2;
+        }
       }
     }
+
+
 
     //si se llega aca, la linea esta completa
     actualizacolordata(a, colrow, 1);
     return 1;
   }
-}
-
-//genera una lista (objeto) con las posiciones de las islas
-//a=0 columnas, a=1 filas
-function listalinea(a, colrow) {
-  linea = new Linea(a, colrow, cantislas(a, colrow, 1)); //tipo, colrow, cant
-  linea.completar(); //completa los elementos q faltan de la linea
-  return linea;
 }
 
 //a=0 para col, a=1 para fila, estado=0 incompleto, =1 completo, =2 error
